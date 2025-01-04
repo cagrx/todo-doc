@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktodo_doc=self.webpackChunktodo_doc||[]).push([[7889],{4749:o=>{o.exports=JSON.parse('{"metadata":{"permalink":"/todo-doc/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
