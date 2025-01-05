@@ -34,3 +34,15 @@ Follow these steps to set up your local development environment:
 ## Next Steps
 
 With your development environment set up, you're ready to start building the todo application. In the next sections, we'll dive into the project structure and begin coding our multi-tier application.
+
+
+
+You should see a result similar to this:
+
+| id   | name      | is_done | sort_order |
+| ---- | --------- | ------- | ---------- |
+| 1    | Test todo | 0       | 1          |
+
+This confirms that our `createTodo` function successfully inserted the new todo item into the database.
+
+If you don't see the record or if the data doesn't match what you expected, double-check your database connection settings and review the `createTodo` function for any potential issues.

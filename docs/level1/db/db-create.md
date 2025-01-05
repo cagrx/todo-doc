@@ -117,7 +117,7 @@ You've just created a basic todo app using SQL! Consider:
 Now that we have our database structure and some initial data, let's save this as a SQL file for future use and version control.
 
 1. In Navicat MySQL, right-click on your `todo_app` database.
-2. Select "Export SQL File" or a similar option (the exact wording may vary depending on your Navicat version).
+2. Select "Dump SQL File" or a similar option (the exact wording may vary depending on your Navicat version).
 3. In the export options:
 
    - Ensure "Structure" and "Data" are both selected.
