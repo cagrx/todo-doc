@@ -90,6 +90,12 @@ Change task priority:
 UPDATE todos SET sort_order = 1 WHERE id = 2;
 ```
 
+View the re-ordered list:
+
+```sql
+SELECT * FROM todos ORDER BY sort_order;
+```
+
 ### Delete: Removing Tasks
 
 Delete a completed task:
