@@ -132,7 +132,7 @@ if (require.main === module) {
 }
 ```
 
-### 5. Verify Setup
+### 6. Verify Setup
 
 To ensure everything is set up correctly, run the file:
 
