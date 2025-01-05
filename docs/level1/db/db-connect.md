@@ -1,5 +1,5 @@
 ---
-sidebar_label: "Connect To The Database"
+sidebar_label: "Connect To The MySQL Instance"
 sidebar_position: 30
 ---
 

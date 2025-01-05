@@ -1,5 +1,5 @@
 ---
-sidebar_label: "Create The Database"
+sidebar_label: "Create The MySQL Instance"
 sidebar_position: 20
 ---
 
