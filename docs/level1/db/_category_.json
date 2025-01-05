@@ -1,0 +1,8 @@
+{
+  "label": "Database Tier",
+  "position": 10,
+  "link": {
+    "type": "generated-index",
+    "description": "Let's set up a MySQL database using AWS RDS."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "label": "Level 1 Example",
+  "position": 20,
+  "link": {
+    "type": "generated-index",
+    "description": "We'll create the simplest version of a three-tier todo app."
+  }
+}
