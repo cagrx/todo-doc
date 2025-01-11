@@ -114,6 +114,7 @@ Create an `.rsyncignore` file in the root of our project directory and ensure it
 
 ```
 node_modules/
+keys/
 *.log
 .DS_Store
 .git/
