@@ -1,0 +1,8 @@
+{
+  "label": "DevOps",
+  "position": 50,
+  "link": {
+    "type": "generated-index",
+    "description": "DevOps streamlines getting our application out the door by automating deployments, ensuring reliable infrastructure, and enabling continuous delivery through efficient collaboration between development and operations."
+  }
+}

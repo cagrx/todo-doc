@@ -1,0 +1,8 @@
+{
+  "label": "Web Server Setup",
+  "position": 40,
+  "link": {
+    "type": "generated-index",
+    "description": "Because the world doesn't want to use port 3004."
+  }
+}
