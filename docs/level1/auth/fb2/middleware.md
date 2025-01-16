@@ -167,7 +167,9 @@ If you open Postman now, and try a new `GET` call for `http://localhost:3004/api
 
 That's because your Postman request needs to now send an Authorization Header with your Firebase authentication token.
 
-An easy way to get the token would be if we output it to the javascript console from the browser. Then we can copy and paste it into a new header in Postman.
+> Recall your `ping` endpoint calls `verifyToken`, which noticed there was not token at all, and responded with code 401. The rest of `ping` did not execute. The `ping` endpoint is now said to be **protected** since it requires an authenticated user. In real life you may have some endpoints that require protection and some that don't.
+
+An easy way to get the token would be to output it to the javascript console from the browser. Then we can copy and paste it into a new header in Postman.
 
 #### Show the token in the browser console
 
