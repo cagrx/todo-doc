@@ -122,6 +122,7 @@ Here's the difference between the two:
      5. Type: `response.type` (e.g., "basic", "cors")
      6. OK status: `response.ok` (boolean indicating if the status is in the 200-299 range)
    - In the future we'll be evaluating `response.ok` to see if we need to alert the user to issues.
+   - For a comprehensive list of standard response codes, [see: HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
 
 2. `responseData` from `response.json()`:
    - `response.json()` is a method called on the Response object to parse the response body as JSON.
@@ -253,13 +254,16 @@ Modify our `ping` endpoint to extract the User ID from the token:
 
 ```javascript
 app.get("/api/ping", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    throw new Error("Missing or invalid token");
+  }
+
+  const idToken = authHeader.split("Bearer ")[1];
   try {
-    const idToken = req.headers.authorization?.split("Bearer ")[1];
-    if (!idToken) {
-      throw new Error("No token provided");
-    }
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    console.log(decodedToken.uid);
+    const user_id = decodedToken.uid;
+    console.log(user_id);
   } catch (error) {
     throw new Error("Invalid token");
   }
@@ -282,37 +286,174 @@ Next:
 5. View your server's terminal for any output
 
 You should see something like this: `Sl8n6LJ86vQGSkwlsvGdqcLijxX2`
-This is the User ID included in the token, and should match the User ID that is output to the web browser console (from Firebase Auth Par 1).
+This is the User ID included in the token, and should match the User ID that is output to the web browser console (from Firebase Auth Part 1).
 
 These new lines of code:
 
-1. Extract the token from the request headers.
-2. Verify that a token was provided.
-3. Use Firebase Admin SDK to verify and decode the token.
-4. Log the user's UID (demonstrating successful verification).
-
-This process ensures that only requests with valid Firebase Auth tokens can access this endpoint, providing a secure way to authenticate API calls using Firebase Authentication.
+1. Extract the token from the Authorization header in the incoming request.
+2. Verify that the Authorization header exists and follows the `Bearer <token>` format.
+3. Use the Firebase Admin SDK to verify and decode the token.
+4. Log the decoded user’s UID, confirming successful token verification.
 
 Specifically:
 
-1. `const idToken = req.headers.authorization?.split("Bearer ")[1];`
-   - This line extracts the token from the Authorization header.
-   - It assumes the header is in the format "Bearer ".
-   - The `?.` is optional chaining, protecting against undefined values.
-   - `split("Bearer ")[1]` separates the "Bearer " prefix from the actual token.
-2. `if (!idToken) { throw new Error("No token provided"); }`
-   - This checks if a token was successfully extracted.
-   - If not, it throws an error, indicating no token was provided in the request.
-3. `const decodedToken = await admin.auth().verifyIdToken(idToken);`
-   - This is a Firebase Admin SDK method.
-   - It verifies the integrity and validity of the ID token.
-   - If the token is valid, it decodes it and returns the payload.
-   - This step ensures the token was issued by your Firebase project and hasn't been tampered with or expired.
-4. `console.log(decodedToken.uid);`
-   - After successful verification, this logs the user's UID (User ID).
-   - The UID is a unique identifier for the user in Firebase Auth.
+1. **Extract Authorization Header**:
+
+   ```javascript
+   const authHeader = req.headers.authorization;
+   ```
+
+   - Retrieves the `Authorization` header from the request.
+
+2. **Validate the Authorization Header**:
+
+   ```javascript
+   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+     throw new Error("Missing or invalid token");
+   }
+   ```
+
+   - Ensures the `Authorization` header is present and starts with `"Bearer "`.
+   - If the header is missing or does not follow the expected format, an error is thrown with the message `"Missing or invalid token"`.
+
+3. **Extract the Token**:
+
+   ```javascript
+   const idToken = authHeader.split("Bearer ")[1];
+   ```
+
+   - Extracts the token portion by splitting the header string after `"Bearer "`.
+   - The resulting `idToken` contains the actual token used for authentication.
+
+4. **Verify and Decode the Token**:
+
+   ```javascript
+   const decodedToken = await admin.auth().verifyIdToken(idToken);
+   ```
+
+   - Uses Firebase Admin SDK's `verifyIdToken` method to verify the token.
+   - If the token is valid, it decodes the token payload into `decodedToken`.
+   - This step ensures the token is authentic and provides additional information (e.g., user ID).
+
+5. **Log the User's UID**:
+
+   ```javascript
+   const user_id = decodedToken.uid;
+   console.log(user_id);
+   ```
+
+   - Extracts the user ID (`uid`) from the decoded token and logs it to the console.
+   - This demonstrates successful verification and confirms the user's identity.
+
+6. **Handle Verification Errors**:
+
+   ```javascript
+   } catch (error) {
+       throw new Error("Invalid token");
+   }
+   ```
+
+   - If the token verification fails (e.g., due to an expired or tampered token), an error is thrown with the message `"Invalid token"`.
+
+7. **Send Success Response**:
+   ```javascript
+   res.status(200).json({
+     status: "UP",
+     timestamp: new Date().toISOString(),
+   });
+   ```
+   - Sends an HTTP 200 OK response containing:
+     - `"status": "UP"`: Indicates the service is operational.
+     - `"timestamp"`: The current timestamp in ISO 8601 format, providing a time reference for the response.
+
+### Error Handling
+
+Errors are thrown in two cases:
+
+- Missing or invalid `Authorization` header: `"Missing or invalid token"`.
+- Invalid or unverified token: `"Invalid token"`.
+
+### Full decodedToken Contents
+
+Is our example, we got the decodedToken and and accessed its uid property:
+
+```javascript
+const decodedToken = await admin.auth().verifyIdToken(idToken);
+const user_id = decodedToken.uid;
+console.log(user_id);
+```
+
+But what else is available from the `decodedToken`? Add this line to find out:
+
+```javascript
+const decodedToken = await admin.auth().verifyIdToken(idToken);
+const user_id = decodedToken.uid;
+console.log(user_id);
+console.log(decodedToken);
+```
+
+Restart your server and ping from the browser. You should see in the server console something that looks like:
+
+```json
+{
+  "provider_id": "anonymous",
+  "iss": "https://securetoken.google.com/todo-app-dff51",
+  "aud": "todo-app-dff51",
+  "auth_time": 1736786430,
+  "user_id": "Sl8n6LJ86vQGSkwlsvGdqcLijxX2",
+  "sub": "Sl8n6LJ86vQGSkwlsvGdqcLijxX2",
+  "iat": 1737049158,
+  "exp": 1737052758,
+  "firebase": { "identities": {}, "sign_in_provider": "anonymous" },
+  "uid": "Sl8n6LJ86vQGSkwlsvGdqcLijxX2"
+}
+```
+
+This is the current decoded Firebase ID token contents. Remember that our user is anonymous - they haven't provided any information like usernames or email addresses.
+
+A fuller representation of a non-anonymous user might look like this:
+
+```json
+{
+  "iss": "https://securetoken.google.com/<project-id>", // Issuer of the token
+  "aud": "<project-id>", // Audience (Firebase project ID)
+  "auth_time": 1619876543, // Time of authentication (Unix timestamp)
+  "user_id": "1234567890", // Firebase UID of the user
+  "sub": "1234567890", // Subject (same as user_id)
+  "iat": 1619876543, // Issued at time (Unix timestamp)
+  "exp": 1619877143, // Expiration time (Unix timestamp)
+  "email": "user@example.com", // User's email address (if available)
+  "email_verified": true, // Whether the email is verified
+  "name": "John Doe", // User's display name (if available)
+  "picture": "https://example.com/photo.jpg", // User's profile picture URL (if available)
+  "firebase": {
+    "identities": {
+      "email": ["user@example.com"], // Linked email addresses
+      "google.com": ["123456789012345678901"] // Linked provider IDs (e.g., Google)
+    },
+    "sign_in_provider": "google.com" // Sign-in provider (e.g., password, Google)
+  },
+  "custom_claims": {
+    // Custom claims added in Firebase (if any)
+    "admin": true
+  }
+}
+```
+
+For now we'll stick with our anonymous user.
+
+## What's Next
+
+In this section, we explored how to retrieve the user ID from a Firebase token within a single route.
+
+While effective, handling token validation directly in each route can lead to duplication and reduced maintainability.
+
+In the next section, we’ll refactor the token-handling logic into a reusable verifyToken middleware function, demonstrating how middleware enables cleaner, more modular, and scalable API design.
+
+<!--
 
 ### Formalizing The Code
+
 
 We're going to be extracting the User ID from the token a lot moving forward. So let's move the code into its own function within `server.js`.
 
@@ -400,3 +541,4 @@ Now try to call `ping` and you should see response code 200 (OK) and a response 
   "timestamp": "2025-01-15T02:52:35.384Z"
 }
 ```
+-->
