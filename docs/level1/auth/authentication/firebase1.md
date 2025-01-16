@@ -1,6 +1,6 @@
 ---
-sidebar_label: "Firebase Auth Part 1"
-sidebar_position: 20
+sidebar_label: "Firebase Authentication"
+sidebar_position: 5
 ---
 
 # Firebase Auth Part 1
