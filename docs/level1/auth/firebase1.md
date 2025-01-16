@@ -152,7 +152,6 @@ This code initializes Firebase with your configuration and creates an auth objec
 auth.onAuthStateChanged((user) => {
   if (user) {
     console.log("Signed in as:", user.uid);
-    ////init();
   } else {
     console.log("No user signed in");
     // Optionally, handle signed-out state
