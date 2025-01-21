@@ -192,6 +192,7 @@ async function createTodo(todoData) {
     );
     return {
       id: result.insertId,
+      //highlight-next-line
       user_id: todoData.user_id,
       name: todoData.name,
       is_done: todoData.is_done,
@@ -202,6 +203,14 @@ async function createTodo(todoData) {
   }
 }
 ```
+
+> Before verifying, be sure to restart your server if needed for changes to take place.
+
+> Be sure you have a fresh token. Refresh your web page and view the javascript console for your current auth header.
+
+> Firefox or Chrome may be better than Safari in displaying the entire contents of the auth header.
+
+> If your browser has been idle for a long time, or you’re accessing your web page from a new browser or tab, your auth header may have a different user id than a previous user id because we’re using anonymous sign-in.
 
 ## Verify with Postman
 
